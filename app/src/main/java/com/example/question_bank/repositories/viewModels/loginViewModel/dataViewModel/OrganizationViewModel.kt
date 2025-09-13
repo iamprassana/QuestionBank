@@ -57,6 +57,26 @@ class OrganizationViewModel : ViewModel() {
         loadAllOrganization()
     }
 
+
+    suspend fun createOrganization(orgName : String) : String?{
+        return try{
+            val newOrg = hashMapOf(
+                "Name" to orgName
+            )
+
+            val docRef = fireStore.collection("organizations")
+                .add(newOrg)
+                .await()
+
+            docRef.id
+
+        }catch (e : Exception) {
+            e.printStackTrace()
+            null
+
+        }
+    }
+
     suspend fun addCourse(orgId: String, courseName: String): Boolean {
         return try {
             val newCourse = hashMapOf(

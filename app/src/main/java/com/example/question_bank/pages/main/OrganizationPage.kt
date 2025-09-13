@@ -43,8 +43,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import com.example.question_bank.pages.utils.CreateDialog
 import com.example.question_bank.repositories.viewModels.loginViewModel.dataViewModel.Course
 import com.example.question_bank.repositories.viewModels.loginViewModel.dataViewModel.OrganizationViewModel
 import com.example.question_bank.ui.theme.IconColor
@@ -112,7 +112,7 @@ fun OrganizationPage(
 
         // Show Dialog when FAB clicked
         if (showDialog) {
-            CreateCourseDialog(
+            CreateDialog(
                 onDismiss = { showDialog = false },
                 onCreate = { courseName ->
                     scope.launch {
@@ -151,63 +151,3 @@ fun CourseDecoration(course: Course, onClick: () -> Unit) {
         }
     }
 }
-
-@Composable
-fun CreateCourseDialog(
-    onDismiss: () -> Unit,
-    onCreate: (String) -> Unit
-) {
-    var courseName by remember { mutableStateOf("") }
-
-    Dialog(onDismissRequest = { onDismiss() }) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .background(MainColor),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "Create New Course", color = TextColor, fontSize = 18.sp)
-
-                TextField(
-                    value = courseName,
-                    onValueChange = {it ->
-                        courseName =  it
-                                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MainColor, RoundedCornerShape(8.dp))
-                        .padding(12.dp),
-                    singleLine = true,
-                    shape = RoundedCornerShape(20.dp)
-                )
-
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Button(onClick = { onDismiss() }, colors = ButtonDefaults.elevatedButtonColors(MainColor)) {
-                        Text("Cancel", color = TextColor)
-                    }
-                    Button(
-                        onClick = {
-                            if (courseName.isNotBlank()) {
-                                onCreate(courseName)
-                            }
-                        },
-                        colors = ButtonDefaults.elevatedButtonColors(MainColor)
-                    ) {
-                        Text("Create", color = TextColor)
-                    }
-                }
-            }
-        }
-    }
-}
-
-

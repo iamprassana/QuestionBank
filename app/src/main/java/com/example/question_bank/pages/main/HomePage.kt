@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
@@ -23,11 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.question_bank.navigation.NavItem
+import com.example.question_bank.pages.utils.CreateDialog
 import com.example.question_bank.repositories.viewModels.loginViewModel.dataViewModel.OrganizationViewModel
 import com.example.question_bank.ui.theme.BoxColor
 import com.example.question_bank.ui.theme.IconColor
 import com.example.question_bank.ui.theme.MainColor
 import com.example.question_bank.ui.theme.TextColor
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -38,9 +41,9 @@ fun HomePage(navController: NavController, ovm: OrganizationViewModel) {
         NavItem("Search", "search", Icons.Filled.Search),
         NavItem("Settings", "settings", Icons.Filled.Settings)
     )
-
+    val showDialog = remember { mutableStateOf(false) }
     val context = LocalContext.current
-
+    val scope = rememberCoroutineScope()
     var selectedItem by remember { mutableStateOf(0) }
     LaunchedEffect(Unit) {
         ovm.loadAllOrganization()
@@ -79,6 +82,20 @@ fun HomePage(navController: NavController, ovm: OrganizationViewModel) {
                     )
                 }
             }
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    showDialog.value = true
+                },
+                containerColor = MainColor
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "Add an organization",
+                    tint = IconColor
+                )
+            }
         }
 
     ) { padding ->
@@ -98,6 +115,27 @@ fun HomePage(navController: NavController, ovm: OrganizationViewModel) {
                     navController.navigate("organization/${org.id}")
                 })
             }
+        }
+
+        if (showDialog.value) {
+            CreateDialog(
+                onDismiss = {
+                    showDialog.value = false
+                },
+                onCreate = {orgName ->
+                    scope.launch {
+                        val success = ovm.createOrganization(orgName)
+
+                        if(success != null) {
+                            Toast.makeText(context, "Successfully Created $orgName", Toast.LENGTH_SHORT).show()
+                            showDialog.value = false
+                            ovm.loadAllOrganization() //Refresh the page
+                        }else {
+                            Toast.makeText(context, "Something Went Wrong...", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            )
         }
     }
 
