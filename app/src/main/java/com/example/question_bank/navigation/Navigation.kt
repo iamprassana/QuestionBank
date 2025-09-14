@@ -1,5 +1,6 @@
 package com.example.question_bank.navigation
 
+import android.widget.SearchView
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,6 +20,7 @@ import com.example.question_bank.pages.main.SettingsPage
 import com.example.question_bank.repositories.viewModels.loginViewModel.dataViewModel.DataViewModel
 import com.example.question_bank.repositories.authentication.FirebaseAuth
 import com.example.question_bank.repositories.fireStore.FireStoreClient
+import com.example.question_bank.repositories.viewModels.loginViewModel.SearchViewModel
 import com.example.question_bank.repositories.viewModels.loginViewModel.dataViewModel.OrganizationViewModel
 
 @Composable
@@ -34,6 +36,7 @@ fun NavigationStack() {
 
     val dataModel : DataViewModel = viewModel()
     val organizationViewModel : OrganizationViewModel = viewModel()
+    val searchViewModel : SearchViewModel = viewModel()
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = route.value) {
@@ -80,7 +83,7 @@ fun NavigationStack() {
         //Search composable
         composable(route = Screen.Search.route) {
             //Call Search Screen
-            SearchPage(navController = navController)
+            SearchPage(navController = navController, searchVm = searchViewModel)
         }
 
         //Upload to firebase page
