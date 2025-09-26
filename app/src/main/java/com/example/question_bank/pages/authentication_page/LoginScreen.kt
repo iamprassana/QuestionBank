@@ -136,10 +136,14 @@ fun LoginScreen(
                 TextButton(
                     onClick = {
                         //Call firebase for sending reset password email.
-                        loginViewModel.resetPassWord(auth, emailState, { success , error ->
-                            if(success) {
-                                Toast.makeText(context, "Password reset email sent!", Toast.LENGTH_SHORT).show()
-                            }else {
+                        loginViewModel.resetPassWord(auth, emailState, { success, error ->
+                            if (success) {
+                                Toast.makeText(
+                                    context,
+                                    "Password reset email sent!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
                                 Toast.makeText(context, "Error: $error", Toast.LENGTH_SHORT).show()
                             }
                             loginViewModel.resetError()
@@ -156,6 +160,7 @@ fun LoginScreen(
                 ElevatedButton(
                     onClick = {
                         loginViewModel.login(auth) {
+                            navController.popBackStack()
                             navController.navigate("home")
                         }
                     },
