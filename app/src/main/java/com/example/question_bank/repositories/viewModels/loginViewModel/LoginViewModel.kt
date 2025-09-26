@@ -35,6 +35,26 @@ class LoginViewModel : ViewModel() {
     fun toggleShowPassword() {
         _showPassword.value = !_showPassword.value
     }
+    
+    fun resetPassWord(auth : FirebaseAuth, email : String , onResult : (Boolean, String?) -> Unit){
+        if(email.isEmpty()) {
+            _errorMessage.value = "Email cannot be null"
+            return
+        }
+
+        viewModelScope.launch {
+            _isLoading.value = true
+            val result = auth.resetPassword(email.trim())
+            if(result.isSuccess) {
+                onResult(true, null)
+            }else {
+                _errorMessage.value = result.exceptionOrNull()?.message
+                onResult(false, result.exceptionOrNull()?.message)
+            }
+        }
+
+        _isLoading.value =  false
+    }
 
     fun login(auth: FirebaseAuth, onSuccess: () -> Unit) {
         if (_email.value.isEmpty() || _password.value.isEmpty()) {

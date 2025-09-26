@@ -11,7 +11,7 @@ class FirebaseAuth() {
 
     suspend fun login(email : String, password : String, route : String) : AuthResult {
         return auth.signInWithEmailAndPassword(email, password).await()
-        }
+    }
 
     suspend fun register(name : String, email : String, password : String) : AuthResult {
         return auth.createUserWithEmailAndPassword(email, password).await()
@@ -19,6 +19,16 @@ class FirebaseAuth() {
 
     suspend fun logout() {
         auth.signOut()
+    }
+
+    suspend fun resetPassword(email : String) : Result<Unit>{
+        return try {
+            auth.sendPasswordResetEmail(email).await()
+            Result.success(Unit)
+        }catch (e : Exception) {
+            Result.failure(e)
+        }
+
     }
 
 }

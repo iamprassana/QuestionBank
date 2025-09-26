@@ -52,7 +52,7 @@ import kotlinx.coroutines.launch
 fun LoginScreen(
     email: String,
     navController: NavHostController,
-    loginViewModel: LoginViewModel = viewModel()
+    loginViewModel: LoginViewModel = viewModel(),
 ) {
     val emailState by loginViewModel.email.collectAsState()
     val passWordState by loginViewModel.password.collectAsState()
@@ -125,6 +125,31 @@ fun LoginScreen(
                 isPassWord = !showPassword
             )
 
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .padding(20.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(
+                    onClick = {
+                        //Call firebase for sending reset password email.
+                        loginViewModel.resetPassWord(auth, emailState, { success , error ->
+                            if(success) {
+                                Toast.makeText(context, "Password reset email sent!", Toast.LENGTH_SHORT).show()
+                            }else {
+                                Toast.makeText(context, "Error: $error", Toast.LENGTH_SHORT).show()
+                            }
+                            loginViewModel.resetError()
+                        })
+                    },
+                    colors = ButtonDefaults.buttonColors(MainColor)
+                ) {
+                    Text("Forgot Password")
+                }
+            }
             Spacer(modifier = Modifier.height(20.dp))
 
             if (!isLoading) {
